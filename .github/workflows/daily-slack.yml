@@ -1,0 +1,24 @@
+name: Daily Slack Message
+
+on:
+  schedule:
+    # 04:00 UTC = 13:00 KST (매일 오후 1시 한국시간)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send fixed message to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "::error::SLACK_WEBHOOK_URL secret is not set. Add it in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          cat > payload.json <<'EOF'
+          {"text":"<!channel>\n[서비스중 고객 확인]\n\n계약고객 관리에 있는 고객들의 컨택을 완료해 주세요.\n48시간 동안 컨택이력이 없다면 자동 방생처리 됩니다.\n컨택중이었던 고객이 방생처리 된다면 <@U0BML624PK8> 후 스레드에 남겨주세요!"}
+          EOF
+          curl -sS -f -X POST -H 'Content-Type: application/json' --data @payload.json "$SLACK_WEBHOOK_URL"
