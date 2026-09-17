@@ -2,8 +2,8 @@ name: Daily Slack Message
 
 on:
   schedule:
-    # 04:00 UTC = 13:00 KST (매일 오후 1시 한국시간)
-    - cron: '0 4 * * *'
+    # 03:55 UTC = 12:55 KST (매일 오후 1시 직전, 정각 혼잡 회피)
+    - cron: '55 3 * * *'
   workflow_dispatch:
 
 jobs:
